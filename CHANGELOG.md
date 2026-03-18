@@ -13,14 +13,14 @@
 - Extended database schema:
   - Added tables: `library_items`, `watched_statuses`, `library_reviews` for collaborative team libraries.
 - Added Drizzle migration (`0003_streampilot_library.sql`) and journal entry.
-- Added initial TMDb API adapter (`lib/tmdb/api.ts`, `lib/tmdb/types.ts`) for universal movie/series search.
+- [REMOVED] TMDb API adapter and all TMDb-powered search/lookup UI and integrations; now supports manual entry only for movies and series.
 - Updated dashboard navigation and layout to reference "Library," "Movies," "Series".
 - [Pending in next commits:] Implement UI for collaborative library dashboard and CRUD lifecycle.
 
-## [2026-04-29] StreamPilot — Library UI list and search
+## [2026-04-29] StreamPilot — Library UI list and manual add
 
 - Implemented dashboard Library root page (`/dashboard/library`), and subpages for Movies and Series.
-- Library UI: all items view, movies list, series list; add modal; TMDb search integration.
+- Library UI: all items view, movies list, series list; add modal for manual entry only (no TMDb search integration).
 - Server data load and client-side skeleton for CRUD interfaces.
 - Prepares ground for details, CRUD, watched status, and review/rating flows.
 
