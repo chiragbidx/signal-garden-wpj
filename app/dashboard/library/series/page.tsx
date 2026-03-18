@@ -1,6 +1,6 @@
 import { db } from "@/lib/db/client";
-import { libraryItems } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { libraryItems, teamMembers, teams } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth/session";
 import LibrarySeriesClient from "./client";
 
@@ -10,10 +10,18 @@ export default async function SeriesPage() {
   const session = await getAuthSession();
   if (!session) return null;
 
-  const userTeamMember = await db.query.teamMembers.findFirst({
-    where: (tm, { eq }) => eq(tm.userId, session.userId),
-    with: { team: true },
-  });
+  // Fetch the team membership using Drizzle select().from().where()
+  const userTeamRows = await db
+    .select({
+      ...teamMembers,
+      team: { id: teams.id, name: teams.name }
+    })
+    .from(teamMembers)
+    .innerJoin(teams, eq(teamMembers.teamId, teams.id))
+    .where(eq(teamMembers.userId, session.userId))
+    .limit(1);
+
+  const userTeamMember = userTeamRows[0];
 
   if (!userTeamMember || !userTeamMember.team) {
     return <div>No team access.</div>;
@@ -21,10 +29,11 @@ export default async function SeriesPage() {
   const teamId = userTeamMember.teamId;
 
   // Series only
-  const items = await db.query.libraryItems.findMany({
-    where: (li, { eq, and }) => and(eq(li.teamId, teamId), eq(li.type, "series")),
-    orderBy: (li, { desc }) => desc(li.dateAdded),
-  });
+  const items = await db
+    .select()
+    .from(libraryItems)
+    .where(and(eq(libraryItems.teamId, teamId), eq(libraryItems.type, "series")))
+    .orderBy(libraryItems.dateAdded && { desc: libraryItems.dateAdded });
 
   return (
     <LibrarySeriesClient items={items} teamId={teamId} sessionUserId={session.userId} />
