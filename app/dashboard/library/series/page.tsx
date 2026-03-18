@@ -1,6 +1,6 @@
 import { db } from "@/lib/db/client";
 import { libraryItems, teamMembers, teams } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth/session";
 import LibrarySeriesClient from "./client";
 
@@ -33,7 +33,7 @@ export default async function SeriesPage() {
     .select()
     .from(libraryItems)
     .where(and(eq(libraryItems.teamId, teamId), eq(libraryItems.type, "series")))
-    .orderBy(libraryItems.dateAdded && { desc: libraryItems.dateAdded });
+    .orderBy(desc(libraryItems.dateAdded));
 
   return (
     <LibrarySeriesClient items={items} teamId={teamId} sessionUserId={session.userId} />
