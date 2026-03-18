@@ -1,6 +1,6 @@
 import { db } from "@/lib/db/client";
 import { libraryItems, teamMembers, teams } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth/session";
 import LibraryMoviesClient from "./client";
 
@@ -33,7 +33,7 @@ export default async function MoviesPage() {
     .select()
     .from(libraryItems)
     .where(and(eq(libraryItems.teamId, teamId), eq(libraryItems.type, "movie")))
-    .orderBy(libraryItems.dateAdded && { desc: libraryItems.dateAdded });
+    .orderBy(desc(libraryItems.dateAdded));
 
   return (
     <LibraryMoviesClient items={items} teamId={teamId} sessionUserId={session.userId} />
