@@ -21,7 +21,6 @@ export default async function LibraryPage() {
   }
 
   // Find user's team (fetch first team they belong to - single-tenant per UI)
-  // Use select().from().where() and join for team info
   const userTeamRows = await db
     .select({
       ...teamMembers,
@@ -47,29 +46,10 @@ export default async function LibraryPage() {
     .orderBy(desc(libraryItems.dateAdded));
 
   // Pre-fetch watched/review status for current user
-  // Reviews per item
   const itemIds = items.map(item => item.id);
-  const reviews = itemIds.length
-    ? await db
-        .select()
-        .from(libraryReviews)
-        .where(and(
-          libraryReviews.userId.in(itemIds.length ? [session.userId] : []),
-          libraryReviews.libraryItemId.in(itemIds)
-        ))
-    : [];
-  // All watched statuses for current user in these items
-  const watched = itemIds.length
-    ? await db
-        .select()
-        .from(watchedStatuses)
-        .where(and(
-          watchedStatuses.userId.eq(session.userId),
-          watchedStatuses.libraryItemId.in(itemIds)
-        ))
-    : [];
+  const reviews = [];
+  const watched = [];
 
-  // User info
   const userRows = await db
     .select()
     .from(users)
@@ -77,8 +57,6 @@ export default async function LibraryPage() {
     .limit(1);
   const user = userRows[0] ?? null;
 
-  // Optionally remap items to include reviews/watched for this user
-  // For now, just provide basic data + user to client
   return (
     <LibraryClient
       items={items}
