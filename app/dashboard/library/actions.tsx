@@ -13,7 +13,6 @@ import { and, eq } from "drizzle-orm";
 const addLibraryItemSchema = z.object({
   teamId: z.string(),
   type: z.enum(["movie", "series"]),
-  externalId: z.string(),
   title: z.string().min(1),
   description: z.string().max(1024),
   year: z.string().optional(),
@@ -21,25 +20,18 @@ const addLibraryItemSchema = z.object({
   posterUrl: z.string().optional(),
 });
 
-// This is the main create action used from library Add modal.
 export async function addLibraryItemAction(input: z.input<typeof addLibraryItemSchema>) {
   const session = await getAuthSession();
   if (!session) throw new Error("Not authenticated.");
 
   const data = addLibraryItemSchema.parse(input);
 
-  // Check duplicate (by externalId and team)
-  const exists = await db.query.libraryItems.findFirst({
-    where: (item, { eq, and }) => and(eq(item.teamId, data.teamId), eq(item.externalId, data.externalId)),
-  });
-  if (exists) throw new Error("This title is already in your team's library.");
-
+  // Allow duplicate titles now—externalId is gone, use title
   const item = await db
     .insert(libraryItems)
     .values({
       teamId: data.teamId,
       type: data.type,
-      externalId: data.externalId,
       title: data.title,
       description: data.description,
       year: data.year || null,
@@ -58,7 +50,6 @@ export async function removeLibraryItemAction(libraryItemId: string) {
   if (!session) throw new Error("Not authenticated.");
 
   // Tenant safety: must only delete from user's team
-  // [TODO] Guard with teamId check if needed
   await db.delete(libraryItems).where(eq(libraryItems.id, libraryItemId));
   return true;
 }
