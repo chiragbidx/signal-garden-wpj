@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 
 import { signOutAction } from "@/app/dashboard/actions";
-import { SidebarNav } from "@/components/dashboard/sidebar-nav";
+import SidebarNav from "@/components/dashboard/sidebar-nav";
 import { MobileNav } from "@/components/dashboard/mobile-nav";
 import { UserMenu } from "@/components/dashboard/user-menu";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
