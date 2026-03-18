@@ -46,7 +46,7 @@ export default async function Home() {
     .filter(([id]) => !hide.has(id));
 
   return (
-    <div className="home-dark min-h-screen bg-gradient-to-b from-zinc-50 via-white to-[#ffe6d8] text-zinc-900 transition-colors dark:from-[#120d0b] dark:via-[#16100d] dark:to-[#1f1612] dark:text-[#f7efe8]">
+    <div className="home-dark min-h-screen bg-gradient-to-b from-[#ffe6d8] via-white to-[#ffe6d8] text-zinc-900 transition-colors dark:from-[#0f1013] dark:via-[#18181a] dark:to-[#1b1b29] dark:text-[#fff8ef]">
       <LayoutNavbar isLoggedIn={!!session} />
       <main className="flex min-h-screen w-full flex-col gap-12 px-6 py-12 sm:px-10 lg:px-16 lg:max-w-[1600px] lg:mx-auto">
         {visibleSections.map(([, node]) => node)}
