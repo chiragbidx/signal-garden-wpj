@@ -14,12 +14,16 @@ export default async function LibraryPage() {
   }
 
   // Find user's team (fetch first team they belong to - single-tenant per UI)
-  const userTeamMember = await db.query.teamMembers.findFirst({
+  // Drizzle does not have findFirst; use findMany and take [0]
+  const userTeamMembers = await db.query.teamMembers.findMany({
     where: (tm, { eq }) => eq(tm.userId, session.userId),
     with: {
       team: true,
     },
+    limit: 1,
   });
+
+  const userTeamMember = userTeamMembers[0];
 
   if (!userTeamMember || !userTeamMember.team) {
     return <div>No team access.</div>;
@@ -42,9 +46,11 @@ export default async function LibraryPage() {
   });
 
   // User info
-  const user = await db.query.users.findFirst({
+  const userArr = await db.query.users.findMany({
     where: (u, { eq }) => eq(u.id, session.userId),
+    limit: 1,
   });
+  const user = userArr[0] ?? null;
 
   return (
     <LibraryClient
