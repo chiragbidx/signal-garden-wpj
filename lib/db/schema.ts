@@ -1,6 +1,6 @@
 import "server-only";
 
-import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uniqueIndex, integer } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 export const users = pgTable("users", {
@@ -113,3 +113,80 @@ export const featureItems = pgTable("feature_items", {
     .notNull()
     .defaultNow(),
 });
+
+// ─── StreamPilot Library ───────────────────────────────────────────────────
+
+// Represents a movie or series in a team's library
+export const libraryItems = pgTable(
+  "library_items",
+  {
+    id: text("id")
+      .notNull()
+      .default(sql`gen_random_uuid()`)
+      .primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id, { onDelete: "cascade" }),
+    // movie or series
+    type: text("type").notNull(), // "movie" | "series"
+    externalId: text("external_id").notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    year: text("year"),
+    genre: text("genre"),
+    posterUrl: text("poster_url"),
+    dateAdded: timestamp("date_added", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    // Prevent duplicate content in team library
+    uniqueIndex("library_item_unique_team_extid_idx").on(table.teamId, table.externalId),
+  ]
+);
+
+// Each user can mark any library item as watched/unwatched
+export const watchedStatuses = pgTable(
+  "watched_statuses",
+  {
+    id: text("id")
+      .notNull()
+      .default(sql`gen_random_uuid()`)
+      .primaryKey(),
+    libraryItemId: text("library_item_id")
+      .notNull()
+      .references(() => libraryItems.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    watchedAt: timestamp("watched_at", { withTimezone: true }),
+  },
+  (table) => [
+    uniqueIndex("watched_status_user_item_idx").on(table.userId, table.libraryItemId),
+  ]
+);
+
+// Each user can leave a rating/review per item
+export const libraryReviews = pgTable(
+  "library_reviews",
+  {
+    id: text("id")
+      .notNull()
+      .default(sql`gen_random_uuid()`)
+      .primaryKey(),
+    libraryItemId: text("library_item_id")
+      .notNull()
+      .references(() => libraryItems.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    rating: integer("rating").notNull(), // 1 to 5
+    reviewText: text("review_text").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("library_review_user_item_idx").on(table.userId, table.libraryItemId),
+  ]
+);
