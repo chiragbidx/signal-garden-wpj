@@ -17,14 +17,18 @@
 - Updated dashboard navigation and layout to reference "Library," "Movies," "Series".
 - [Pending in next commits:] Implement UI for collaborative library dashboard and CRUD lifecycle.
 
+## [2026-04-29] StreamPilot — Library UI list and search
+
+- Implemented dashboard Library root page (`/dashboard/library`), and subpages for Movies and Series.
+- Library UI: all items view, movies list, series list; add modal; TMDb search integration.
+- Server data load and client-side skeleton for CRUD interfaces.
+- Prepares ground for details, CRUD, watched status, and review/rating flows.
+
 **Key files:**
-- `content/home.ts`
-- `components/layout/navbar.tsx`
-- `components/home/LayoutFooterSection.tsx`
-- `components/dashboard/sidebar-nav.tsx`
-- `lib/db/schema.ts`
-- `drizzle/0003_streampilot_library.sql`
-- `drizzle/meta/_journal.json`
-- `lib/tmdb/types.ts`
-- `lib/tmdb/api.ts`
-- `CHANGELOG.md`
+- `app/dashboard/library/page.tsx`
+- `app/dashboard/library/client.tsx`
+- `app/dashboard/library/actions.tsx`
+- `app/dashboard/library/movies/page.tsx`
+- `app/dashboard/library/movies/client.tsx`
+- `app/dashboard/library/series/page.tsx`
+- `app/dashboard/library/series/client.tsx`
