@@ -8,8 +8,8 @@ import ErrorReporter from "../components/ErrorReporter";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Panda - SaaS App Builder Starter",
-  description: "Production-ready SaaS app builder starter template with modern UI, dark mode, and launch-ready sections.",
+  title: "StreamPilot – Curate and Track Your Streaming Library",
+  description: "Discover, curate, and manage your team’s streaming content with StreamPilot—your all-in-one dashboard for movies and series.",
 };
 
 export default function RootLayout({
