@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { SidebarNav } from "@/components/dashboard/sidebar-nav";
+import SidebarNav from "@/components/dashboard/sidebar-nav";
 
 type MobileNavProps = {
   fullName: string;
